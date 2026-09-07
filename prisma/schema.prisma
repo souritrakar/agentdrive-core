@@ -1,0 +1,44 @@
+// The catalog: structure, naming, and integrity for the object store.
+// The node graph is unified under a single content-addressed table; the
+// per-kind entities were collapsed into it.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  runtime  = "workerd"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Tenancy root. Ownership + billing boundary.
+model Account {
+  id             String  @id @default(uuid(7)) @db.Uuid
+  email          String  @unique
+  externalAuthId String? @unique @map("external_auth_id")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  @@map("accounts")
+}
+
+/// A node in the tree. Content-addressed: the digest is the identity, the key
+/// layout is resolved at the storage layer, and this row carries only the
+/// logical pointer plus integrity metadata. Parent, kind, and namespace
+/// columns are managed by the catalog layer.
+model Node {
+  id        String  @id @default(uuid(7)) @db.Uuid
+  accountId String  @map("account_id") @db.Uuid
+
+  // NOTE: parent/kind/namespace columns pending the migration above.
+  digest    String? @map("content_digest")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  @@index([accountId])
+  @@map("nodes")
+}

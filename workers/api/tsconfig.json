@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "types": ["@cloudflare/workers-types"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["../../src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "../../src/db/client.ts",
+    "../../src/db/scope.ts",
+    "../../src/filesystem/**/*.ts",
+    "../../src/generated/prisma/**/*.ts",
+    "../../src/schemas/*.ts",
+    "../../src/storage/*.ts"
+  ],
+  // Reads `process.env`, which the Worker runtime does not have.
+  "exclude": [
+    "../../src/storage/env.ts",
+    "../../src/filesystem/**/*.test.ts"
+  ]
+}

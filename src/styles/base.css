@@ -1,0 +1,38 @@
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  BASE — element defaults. Deliberately thin.
+
+  Anything that applies to *some* elements belongs in a component or a utility,
+  not here. A base layer that grows is a base layer people start fighting with
+  `!important`.
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    /*
+      No `font-feature-settings` here. The set this file used to carry was
+      Inter's character-variant axes (cv02, cv11, …); Onest does not publish
+      those, so leaving them applied would have been six no-ops pretending to
+      be a decision.
+
+      Numeric alignment — the one thing they were load-bearing for in a file
+      listing — is bought in `typography.css` instead, by the two roles that
+      actually render numbers (`type-meta`, `type-metric`).
+    */
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Peacock, low alpha — legible against the near-black page. */
+  ::selection {
+    background-color: color-mix(in oklab, var(--brand-peacock) 32%, transparent);
+  }
+}

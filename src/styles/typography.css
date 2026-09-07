@@ -1,0 +1,184 @@
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  TYPOGRAPHY — the type scale, named by role.
+
+  Why a `type-*` namespace instead of Tailwind's `text-*`:
+
+  1. A size alone is not a decision. Every role below carries size, line
+     height, weight, tracking and — where it matters — numeric alignment,
+     together. `text-sm` at three call sites can silently mean three different
+     things; `type-meta` cannot.
+
+  2. Half of this product's type is responsive. `text-base sm:text-sm` appeared
+     verbatim across ten files: 16px on phones so a filename is comfortably
+     readable at arm's length and iOS does not zoom the field, 14px on desktop
+     where the same text sits in a dense list. That pair is a design decision
+     and it needs a name, not a copy-paste. Tailwind's `--text-*` theme tokens
+     produce a single static size and cannot express it; a custom utility can.
+
+  3. It separates two things that were sharing one prefix. In product code
+     `text-*` now means colour only (`text-muted-foreground`) and `type-*`
+     means typography. Reading a class list, you can tell them apart.
+
+  Every value in this file is a type value; there are no other kinds here, and
+  no type values anywhere else. `src/components/ui` is the deliberate exception
+  — see docs/design-system/tokens.md.
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
+/*
+  Page titles. Tracking that reads correctly at 14px is always slightly loose at
+  30px — optical spacing does not scale linearly. Everything below `type-title`
+  keeps near-default tracking, where the same correction would start closing up
+  counters.
+*/
+@utility type-display {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+
+/* Dialog titles and major section headings. */
+@utility type-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+/* Card and panel headings — the level below a title. */
+@utility type-heading {
+  font-size: 1.125rem;
+  line-height: 1.625rem;
+  font-weight: 500;
+  letter-spacing: -0.006em;
+}
+
+/*
+  A single figure that is the point of its container — a total size, a file
+  count. Tabular figures so it does not jitter while it counts up.
+*/
+@utility type-metric {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+  Running text: descriptions, empty states, dialog bodies.
+
+  The responsive step down is the rule, not the exception — see note 2 above.
+*/
+@utility type-body {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 400;
+  @media (width >= theme(--breakpoint-sm)) {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+/*
+  The name of a thing in a list, and the label on a control. Same metrics as
+  `type-body`, one weight up — which is the whole hierarchy in a file browser:
+  the filename is medium, everything around it is regular.
+*/
+@utility type-label {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  @media (width >= theme(--breakpoint-sm)) {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+}
+
+/*
+  Secondary facts attached to a row: size, modified date, item count.
+
+  Tabular figures are load-bearing here rather than decorative — a column of
+  file sizes with proportional digits does not line up, and a column that does
+  not line up is one the eye cannot scan. Onest does not publish Inter's
+  character-variant axes, so this is where numeric alignment is bought.
+
+  Drops to 13px on desktop: below the body step, because in a dense list the
+  metadata must lose to the name.
+*/
+@utility type-meta {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  @media (width >= theme(--breakpoint-sm)) {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+  }
+}
+
+/*
+  Small secondary prose: an error's supporting sentence, a hint below a control.
+
+  Shares `type-meta`'s metrics deliberately — the two sit at the same level in
+  the hierarchy and would read as a mistake at different sizes — but carries no
+  tabular figures, because forcing them on running prose widens the digits
+  inside a sentence for no benefit.
+*/
+@utility type-detail {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 400;
+  @media (width >= theme(--breakpoint-sm)) {
+    font-size: 0.8125rem;
+    line-height: 1.125rem;
+  }
+}
+
+/* Helper text under a field, and legal or timestamp fine print. */
+@utility type-caption {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 400;
+}
+
+/*
+  Group labels above a set of items — sidebar section headings, menu group
+  titles. Uppercase and widely tracked so it reads as a label rather than as
+  content, at a size where it cannot compete with anything.
+*/
+@utility type-eyebrow {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/*
+  The letter standing in for a drive that has no icon.
+
+  Not body text and not a heading — a glyph, sized to its container rather than
+  to the reading scale, which is why it has its own role and does not step down
+  responsively. Two steps because it is drawn in two square sizes: the 40px
+  card avatar and the 28px rail square. Optical centring in a small square
+  needs the letter noticeably smaller than the box, so the ratios are not the
+  same at both sizes.
+*/
+@utility type-monogram {
+  font-size: 1rem;
+  line-height: 1;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+@utility type-monogram-sm {
+  font-size: 0.6875rem;
+  line-height: 1;
+  font-weight: 600;
+  text-transform: uppercase;
+}

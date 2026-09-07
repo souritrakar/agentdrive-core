@@ -1,0 +1,33 @@
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  UTILITIES — cross-cutting treatments that more than one component needs, and
+  that would drift if each of them re-expressed it.
+
+  The bar for adding one: two or more call sites, and a name that says what it
+  means rather than what it does. Anything used once belongs in its component.
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
+/*
+  A full-bleed drop target for uploads. The visual treatment lives here rather
+  than in the component so the "drop anywhere" affordance stays one concept.
+*/
+@utility drop-active {
+  @apply outline-2 -outline-offset-2 outline-lime;
+  background-color: color-mix(in oklab, var(--brand-lime) 5%, transparent);
+}
+
+/*
+  The page's horizontal rhythm, as a utility so a sticky header and the content
+  it sits over can share one definition without one of them having to render
+  the other's container.
+*/
+@utility page-gutter {
+  padding-inline: var(--page-gutter);
+  @media (width >= theme(--breakpoint-sm)) {
+    padding-inline: var(--page-gutter-sm);
+  }
+  @media (width >= theme(--breakpoint-lg)) {
+    padding-inline: var(--page-gutter-lg);
+  }
+}

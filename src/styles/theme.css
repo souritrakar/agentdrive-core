@@ -1,0 +1,108 @@
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  THEME — exposes the tokens in `tokens.css` to Tailwind as utilities.
+
+  Nothing here declares a value. Every line is `var(--something)` pointing at
+  `tokens.css`. If you find yourself typing a number in this file, it belongs in
+  `tokens.css` instead.
+
+  `@theme inline` rather than `@theme`: plain `@theme` snapshots the value at
+  build time, which silently breaks the moment a token is repointed at runtime
+  (a theme switch, a density preset). `inline` keeps the `var()` reference
+  intact, so re-theming stays a one-variable change.
+
+  The namespace decides which utility appears:
+    --color-*    → bg-* / text-* / border-* / ring-* / fill-* / stroke-*
+    --spacing-*  → h-* / w-* / p-* / m-* / gap-*
+    --radius-*   → rounded-*
+    --shadow-*   → shadow-*
+    --font-*     → font-*
+    --text-*     → text-*   (type roles live in typography.css instead)
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
+@theme inline {
+  /* Type family. */
+  --font-sans: var(--font-sans);
+  --font-heading: var(--font-sans);
+
+  /* Surfaces. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Brand accents. Used sparingly and for distinct jobs — see tokens.css. */
+  --color-lime: var(--brand-lime);
+  --color-lime-foreground: var(--brand-lime-foreground);
+  --color-teal: var(--brand-teal);
+  --color-peacock: var(--brand-peacock);
+
+  /* File-type tints. Material, not emphasis — see the chroma rule in tokens.css. */
+  --color-tint-document: var(--tint-document);
+  --color-tint-media: var(--tint-media);
+  --color-tint-code: var(--tint-code);
+  --color-tint-archive: var(--tint-archive);
+
+  /* Semantic roles. */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar's scoped ramp. */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Elevation — `shadow-soft` and `shadow-modal`, and nothing else. */
+  --shadow-soft: var(--shadow-soft);
+  --shadow-modal: var(--shadow-modal);
+
+  /*
+    Radius, derived. Kept on Tailwind's size names rather than role names
+    because shadcn's vendored components in `src/components/ui` are generated
+    against `rounded-lg`/`rounded-xl` and re-mapping them would mean patching
+    every component on every registry update.
+  */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /*
+    Layout. The gutter ramp is consumed by the `page-gutter` utility rather
+    than exposed as `px-gutter`, because it is a three-breakpoint ramp and a
+    single padding utility cannot carry one.
+
+    The sidebar widths are deliberately absent here: `app-shell.tsx` reads them
+    as `w-(--sidebar-width)` straight from tokens.css, and adding a
+    `--spacing-sidebar` alias would give the same value two names — which is
+    the drift this layer exists to prevent.
+  */
+  --container-measure: var(--page-measure);
+}

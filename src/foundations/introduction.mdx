@@ -1,0 +1,73 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Foundations/Introduction" />
+
+# AgentDrive workbench
+
+Every meaningful visual state of this product, one click away, rendering from
+the real design tokens.
+
+Not a gallery of buttons. The value is in **Sections** and **Pages** — that is
+where layout breaks, where long content overflows, and where the states you
+would otherwise have to break the backend to see actually live.
+
+## The one rule
+
+**A component never contains a value. It contains a name for a value.**
+
+`bg-card`, not `#1e1e24`. `type-meta`, not `text-sm`. A role name survives a
+restyle; an appearance name becomes a lie the moment someone adjusts it.
+
+`pnpm check:tokens` fails the build on a hardcoded value in any path already
+cleaned. The list of clean paths only grows.
+
+## How to read the sidebar
+
+It is ordered as an argument, not alphabetically.
+
+| Level | What it is |
+| --- | --- |
+| **Foundations** | The tokens themselves, rendered live from the running CSS |
+| **Primitives** | The smallest styled elements — button, toggle |
+| **Components** | A few primitives doing one job — a file tile, a breadcrumb |
+| **Sections** | A named region of a page, with its full state catalogue |
+| **Pages** | A whole route, composed |
+
+The Foundations pages read `getComputedStyle` at runtime rather than listing
+values. They cannot go stale: if a swatch looks wrong, the token is wrong.
+
+## Where things live
+
+```
+src/styles/tokens.css       every raw value in the product
+src/styles/theme.css        exposes them to Tailwind as utility names
+src/styles/typography.css   the type scale, as type-* roles
+src/components/ui           design system primitives (vendored shadcn)
+src/components/shared       generic, no domain knowledge
+src/components/<feature>    browser · drives · layout · upload · auth
+src/fixtures                story data — never imported by product code
+```
+
+Dependencies only ever point down that list. A shared component that imports a
+feature drags that feature's data layer into every story that touches it, which
+is usually how you find out it happened.
+
+## Changing something
+
+- **A colour, a radius, a shadow** → `src/styles/tokens.css`. Every story moves.
+- **A type role** → `src/styles/typography.css`.
+- **A new component** → it needs a story before it is done.
+
+Full detail: `docs/design-system/tokens.md`, `docs/design-system/workflow.md`,
+and `docs/design/principles.md` for what any of it is trying to achieve.
+
+## What is not here yet
+
+Three components fetch their own data and so cannot be put into a state by
+passing props: `BrowserView`, `SidebarContent`, and `UploadTray`. They need a
+container/view split before they can be storied — the presentational parts they
+render (`Sections/Entry grid`, `Sections/Entry list`) are covered instead.
+
+That gap is recorded rather than hidden, because the difference between "34
+stories" and "34 stories, and here is what has none" is the only part of a
+coverage claim that is useful.

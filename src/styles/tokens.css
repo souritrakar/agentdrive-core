@@ -1,0 +1,175 @@
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  TOKENS — every raw visual value in the product is declared here, and nowhere
+  else.
+
+  This is the only file in `src/` allowed to contain a literal colour, size, or
+  shadow. Components consume names (`bg-card`, `type-body`, `shadow-modal`),
+  never values. That is what makes a restyle a one-file change instead of a
+  find-and-replace across ninety components.
+
+  Exposure to Tailwind happens in `theme.css`. Type roles are in
+  `typography.css`. Do not add values in either — they reference this file.
+
+  Direction and rationale: docs/design/principles.md
+  How to change or add a token: docs/design-system/workflow.md
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
+:root {
+  /* ── Surfaces ─────────────────────────────────────────────────────────────
+    AgentDrive is dark-only. There is one palette, defined on `:root`, so there
+    is no theme flash and no second set of values to keep in sync. `<html>`
+    still carries the `dark` class so shadcn's internal `dark:` variants
+    resolve, and `scheme-only-dark` makes native UI render dark too.
+
+    Neutrals carry a trace of blue chroma rather than being pure grey — it
+    reads as considered rather than default, and it sits under the teal/peacock
+    accents without fighting them.
+
+    Surfaces step up from the page, never down. Each is one rung lighter.
+  */
+  --background: oklch(0.145 0.005 250);
+  --foreground: oklch(0.975 0.002 250);
+
+  --card: oklch(0.185 0.006 250);
+  --card-foreground: var(--foreground);
+  --popover: oklch(0.205 0.007 250);
+  --popover-foreground: var(--foreground);
+
+  /* ── Brand accents ────────────────────────────────────────────────────────
+    Each has exactly one job, so three colours never read as noise:
+      lime    — the single primary action, and upload/progress affordances
+      teal    — focus rings and the "you are here" accent
+      peacock — selection and informational emphasis
+  */
+  --brand-lime: oklch(0.87 0.19 124);
+  --brand-lime-foreground: oklch(0.22 0.05 130);
+  --brand-teal: oklch(0.68 0.095 202);
+  --brand-peacock: oklch(0.62 0.125 238);
+
+  /* ── File-type tints ──────────────────────────────────────────────────────
+    The second half of the chroma rule.
+
+    Saturation, not hue, is what makes a colour an accent here. The three brand
+    accents above are the only colours allowed to mean *state* (primary /
+    focused / selected). These four say what a thing *is*, never what state it
+    is in: type glyphs only, never a border, a control, or a status.
+
+    The boundary is 0.09 chroma. Accents sit at or above it (teal 0.095,
+    peacock 0.125, lime 0.19); tints sit at or below (0.085 and down). Lime,
+    the one that has to win, is still more than twice any tint.
+
+    These were first drawn at 0.04 and that was wrong. Chroma that low reads as
+    a colour on a large light surface, but these are rendered as a duotone
+    outline a pixel and a half wide against a near-black card, and at that size
+    the hue simply disappears — all four came out identically grey. Perceived
+    saturation falls with the area you paint, so a value chosen in the abstract
+    has to be re-picked against the real glyph at the real size.
+
+    Hues are chosen to stay clear of the accents rather than merely dimmer than
+    them: amber, rose, and violet sit 60–140° apart from each other and nowhere
+    near lime (124), teal (202), or peacock (238). A tint that is only a
+    desaturated peacock invites being read as a weak selection state.
+  */
+  --tint-document: oklch(0.81 0.08 72);
+  --tint-media: oklch(0.75 0.085 10);
+  --tint-code: oklch(0.76 0.08 292);
+  --tint-archive: oklch(0.72 0.022 250);
+
+  /* ── Semantic roles ───────────────────────────────────────────────────────
+    Quiet surfaces for secondary buttons, hovers, and active nav rows.
+  */
+  --primary: var(--brand-lime);
+  --primary-foreground: var(--brand-lime-foreground);
+
+  --secondary: oklch(0.235 0.007 250);
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(0.235 0.007 250);
+  --muted-foreground: oklch(0.685 0.012 250);
+  --accent: oklch(0.262 0.008 250);
+  --accent-foreground: var(--foreground);
+
+  --destructive: oklch(0.638 0.192 24);
+
+  /* Opacity-based, so borders sit on any surface without a seam. */
+  --border: oklch(1 0 0 / 8%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: var(--brand-teal);
+
+  --chart-1: var(--brand-lime);
+  --chart-2: var(--brand-teal);
+  --chart-3: var(--brand-peacock);
+  --chart-4: oklch(0.62 0.02 250);
+  --chart-5: oklch(0.42 0.015 250);
+
+  /* ── Elevation ────────────────────────────────────────────────────────────
+    Two shadows. That is the complete set.
+
+    If something needs a third to read as separate, the spacing around it is
+    wrong — fix the spacing, not the shadow. `soft` is a resting raised
+    surface; `modal` is anything that floats over the page and must be
+    unambiguously in front of it.
+
+    On a near-black page a shadow cannot darken its way to separation the way
+    it does on white — there is very little left to darken. So both carry a
+    hairline of light at the top edge (the inset highlight) which is what
+    actually reads as "this is nearer to you", with the cast shadow doing the
+    secondary work of anchoring it.
+  */
+  --shadow-soft:
+    0 1px 2px oklch(0 0 0 / 0.4),
+    0 2px 8px -2px oklch(0 0 0 / 0.3),
+    inset 0 1px 0 oklch(1 0 0 / 0.04);
+  --shadow-modal:
+    0 4px 12px oklch(0 0 0 / 0.5),
+    0 16px 40px -8px oklch(0 0 0 / 0.45),
+    inset 0 1px 0 oklch(1 0 0 / 0.06);
+
+  /* ── Radius ───────────────────────────────────────────────────────────────
+    One base value; every step is derived from it. Changing `--radius` alone
+    moves the whole product between sharp and soft.
+  */
+  --radius: 0.625rem;
+
+  /* ── Layout ───────────────────────────────────────────────────────────────
+    Composite spacings that carry a design decision. Ordinary gaps and padding
+    keep using Tailwind's 4px scale — re-tokenising that buys nothing.
+
+    The gutter is a single ramp so a page header and its content column cannot
+    disagree; mismatched container padding between sections is the most common
+    way a layout ends up looking slightly off without anyone being able to say
+    why.
+  */
+  --page-measure: 72rem;
+  --page-gutter: 1rem;
+  --page-gutter-sm: 1.5rem;
+  --page-gutter-lg: 2rem;
+
+  /*
+    Two sidebar widths, one token each, because three separate things have to
+    agree on them: the rail's own width, the content column's left offset, and
+    the header's sticky origin. Hard-coding `w-68`/`pl-68` in each place is how
+    a collapse animation ends up half a frame out of sync with the page.
+  */
+  --sidebar-width: 17rem;
+  --sidebar-width-icon: 4.5rem;
+
+  /* ── Sidebar ramp ─────────────────────────────────────────────────────────
+    The sidebar shares the page background and is separated by a divider, not a
+    fill — a large tinted panel is the thing that makes dark UIs look cheap.
+
+    It still gets its own scoped ramp rather than borrowing the page's. A
+    region that can ever invert needs one, and `--muted-foreground` happening
+    to look right on this rail today is not a guarantee it will after a
+    restyle.
+  */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--brand-lime);
+  --sidebar-primary-foreground: var(--brand-lime-foreground);
+  --sidebar-accent: oklch(0.235 0.007 250);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: var(--brand-teal);
+}

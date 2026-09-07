@@ -1,0 +1,36 @@
+/*
+  ─────────────────────────────────────────────────────────────────────────────
+  The stylesheet entry point. It imports; it does not declare.
+
+  Read in this order — each layer only depends on the ones above it:
+
+    tokens.css      every raw value in the product (colour, size, shadow)
+    theme.css       exposes those tokens to Tailwind as utility names
+    typography.css  the type scale, named by role
+    base.css        element defaults
+    utilities.css   cross-cutting treatments
+
+  Adding a value to this file is always a mistake — it belongs in tokens.css.
+
+  Vocabulary and rules: docs/design-system/tokens.md
+  How to change something: docs/design-system/workflow.md
+  Visual reference:        pnpm storybook
+  ─────────────────────────────────────────────────────────────────────────────
+*/
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@import "../styles/tokens.css";
+@import "../styles/theme.css";
+@import "../styles/typography.css";
+@import "../styles/base.css";
+@import "../styles/utilities.css";
+
+/*
+  Dark-only product: `<html>` carries `dark` permanently so shadcn's internal
+  `dark:` variants resolve against the single palette in tokens.css. This
+  variant definition is what makes them resolve.
+*/
+@custom-variant dark (&:is(.dark *));

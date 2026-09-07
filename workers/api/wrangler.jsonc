@@ -1,0 +1,62 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "agentdrive-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-01",
+  // Lets Neon/Drizzle use Node built-ins (buffer, crypto) inside the Worker.
+  "compatibility_flags": ["nodejs_compat"],
+  /*
+    Observability is on, but the per-request invocation log is not.
+
+    That log line records the full request URL, and `/v1/shares/:token` puts a
+    working credential in the path — so leaving it on writes share tokens in
+    plaintext into Workers Logs, and into Logpush and any log destination
+    downstream of it. Anyone who can read logs could paste one into a browser
+    and open the file. Cloudflare's automatic redaction does not help here: it
+    matches header *names* containing auth/key/secret/token/jwt, and a path
+    reading `/v1/shares/<22 chars>` looks like any other route to it.
+
+    docs/architecture/sharing/02-public-access-security.md §6 already committed
+    to this ("our own logging never records the path of /v1/shares/* requests
+    with the token attached"); this is the mechanism that keeps the promise,
+    rather than a review rule that only catches `console.log`.
+
+    The cost is real and worth stating: this is a Worker-wide switch, so the
+    built-in "GET /path 200 OK" line is gone for every route, not just the
+    share ones. Nothing in the app logged per request anyway, so no existing
+    signal is lost — but a future request log has to be written by hand, and it
+    must log the share `id` returned by resolution, never the token.
+  */
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": false
+    }
+  },
+
+  // Reconciliation for uploads whose client never confirmed them. R2 publishes
+  // no object-level events, so nothing else would ever notice a PUT that
+  // landed after the tab closed. Fifteen minutes is the window between "the
+  // bytes arrived" and "the file appears"; see src/transfer/internal/reaper.ts.
+  "triggers": {
+    "crons": ["*/15 * * * *"]
+  },
+
+  // The AWS SDK's XML parser resolves to a DOMParser-based browser build under
+  // wrangler's bundler, which workerd cannot run. See the shim for detail.
+  "alias": {
+    "@aws-sdk/xml-builder": "./src/lib/xml-builder-node.ts"
+  }
+
+  // Object storage is deliberately NOT a native r2_buckets binding — it goes
+  // through the S3 API (see src/lib/storage.ts) so moving to AWS S3 later is
+  // a config change, not a rewrite. Create the bucket with:
+  //   wrangler r2 bucket create agentdrive-artifacts
+
+  // Infrastructure to uncomment as AgentDrive needs it:
+  // "kv_namespaces": [{ "binding": "CACHE", "id": "<kv-id>" }],
+  // "queues": { "producers": [{ "binding": "JOBS", "queue": "agentdrive-jobs" }] },
+  // "durable_objects": { "bindings": [{ "name": "AGENT", "class_name": "AgentSession" }] },
+  // "ai": { "binding": "AI" }
+}
