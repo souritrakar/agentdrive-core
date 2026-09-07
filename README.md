@@ -2,7 +2,7 @@
 
 WIP - A programmable filesystem substrate I'm building for my agents. A POSIX-shaped virtual filesystem layered over commodity object storage, so an agent gets a real tree with namespaces, capabilities, and integrity guarantees instead of a flat key-value bucket
 
-Object storage is the right block device and the wrong interface. This is the VFS that sits on top of it.
+Object storage is the wrong interface for the agent to interact with or operate on. This is the VFS that sits on top of it
 
 ```
         agent / control plane
@@ -24,10 +24,10 @@ Object storage is the right block device and the wrong interface. This is the VF
 
 - **Content-addressed nodes.** Every blob is keyed by its digest. Writes dedupe, reads verify against the digest, and identical content is stored once regardless of how many paths point at it. The catalog holds the logical pointer, the object store holds bytes under an opaque key it never has to interpret.
 - **Metadata / bytes split.** The catalog (Postgres) is the single source of truth for tree structure, names, and integrity. The object store only ever sees flat, opaque keys. Folder names never live in object keys, so a rename is a catalog transaction, not an O(n) copy across the bucket.
-- **Per-agent namespaces.** Each agent (or run) gets an isolated mount rooted at its own namespace. No shared mutable root, no cross-tenant key collision, no "one bucket per drive" sprawl.
-- **Capability-scoped mounts.** A mount is issued with an explicit capability set — `read`, `write`, `list`, `share`. No ambient authority: a call that needs to write carries the write capability or it is refused at the boundary.
-- **Two-phase writes.** Large objects go through `initiate → sign → commit`. Parts are presigned and uploaded straight to the store; the node only becomes visible on commit. A dropped connection leaves an orphaned upload session, never a half-written, readable file.
-- **Edge-resident data plane.** The API runs on Cloudflare Workers (Hono) next to the object store, so signing and metadata round-trips do not bounce through a central origin.
+- **Per-agent namespaces.** Each agent (or run) gets an isolated mount rooted at its own namespace. No shared mutable root, no cross-tenant key collisio
+- **Capability-scoped mounts.** A mount is issued with an explicit capability set — `read`, `write`, `list`, `share`.  a call that needs to write carries the write capability or it is refused at the boundary.
+- **Two-phase writes.** Large objects go through `initiate → sign → commit`. Parts are presigned and uploaded straight to the store; the node only becomes visible on commit. A dropped connection leaves an orphaned upload session
+- **Edge-resident data plane.** cloudflare workers hono next to the object store, so signing and metadata round-trips do not bounce through a central origin.
 
 ## Stack
 
