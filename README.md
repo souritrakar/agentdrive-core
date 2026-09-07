@@ -1,6 +1,6 @@
 # agentdrive-core
 
-WIP - A programmable filesystem substrate I'm building for my agents. A POSIX-shaped virtual filesystem layered over commodity object storage, so an agent gets a real tree with namespaces, capabilities, and integrity guarantees instead of a flat key-value bucket
+WIP - Programmable filesystem layer and primitives I'm building for my agents. A POSIX-shaped virtual filesystem layered over commodity object storage, so an agent gets a real tree with namespaces, capabilities, and integrity guarantees instead of a flat key-value bucket
 
 Object storage is the wrong interface for the agent to interact with or operate on. This is the VFS that sits on top of it
 
